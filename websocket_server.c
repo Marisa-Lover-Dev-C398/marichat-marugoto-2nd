@@ -9,6 +9,17 @@
 #define MAX_USERS 32
 #define MAX_PAYLOAD 512
 
+enum user_status {
+  USER_STATUS_OFFLINE,
+  USER_STATUS_ONLINE,
+};
+
+enum send_status {
+  SEND_STATUS_UNSENT,
+  SEND_STATUS_FAILED,
+  SEND_STATUS_SENT,
+};
+
 struct send_request {
   char msg[1024];
   size_t len;
@@ -19,6 +30,8 @@ struct user_data{
   int uid;
   char* name;
   int room_id;
+  enum user_status u_status; 
+  enum send_status s_status;
   struct send_request req;
 };
 
@@ -31,7 +44,7 @@ static int callback(struct lws *wsi, enum lws_callback_reasons reason,
   {
     case LWS_CALLBACK_ESTABLISHED:
       printf("[line:3(int)callback()]接続来たよ^^\n\n");
-      for(int i = 0;i < ROOM_MAX; i++)
+      for(int i = 0;i < MAX_USERS; i++)
       {
         if(users[i]==NULL){
           users[i] = data;
